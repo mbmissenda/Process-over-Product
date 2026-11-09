@@ -1,7 +1,7 @@
 [README.md](https://github.com/user-attachments/files/34591020/README.md)
 # Process Over Product: Faculty Workbook
 
-A single-page, self-paced workbook for the NDMU faculty webinar "Process Over Product: A Faculty Framework for AI-Era Online Assessment Design" (December 3, 2026).
+A single-page, self-paced workbook for the faculty webinar "Process Over Product: A Faculty Framework for AI-Era Online Assessment Design" (December 3, 2026).
 
 Faculty work through four moves on one of their own assessments:
 
