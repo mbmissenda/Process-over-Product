@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Process Over Product Workbook</title>
+<meta name="description" content="Work through Skill, Spot, Step, and Score on one of your own online assessments.">
+<style>
+  :root{
+    --forest:#18352D; --forest-2:#142C25; --leaf:#486D52; --paper:#F6F3E9; --cream:#FFFCF5;
+    --sage:#DCE7D8; --sage-2:#B9CBB5; --text:#24362E; --earth:#A77A46; --earth-dark:#7E5A30;
+    --muted:#55665D; --line:#C9D3C6; --warn:#8A3B12; --warn-bg:#F9ECE7;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: Calibri, "Segoe UI", Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{font-size:18px}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.5}
+  a{color:var(--leaf)}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+  header.top{background:var(--forest);color:var(--cream);padding:40px 0 28px}
+  header.top h1{font-family:var(--serif);font-weight:400;font-size:2.1rem;margin:0 0 6px;line-height:1.2}
+  header.top p{margin:0;color:var(--sage);max-width:720px}
+  .note{font-size:.85rem;color:var(--sage-2);margin-top:12px}
+  nav.steps{position:sticky;top:0;z-index:5;background:var(--forest-2);border-bottom:1px solid #0d1e19}
+  nav.steps ol{list-style:none;margin:0 auto;padding:0 20px;max-width:980px;display:flex;gap:4px;overflow-x:auto}
+  nav.steps button{background:none;border:0;color:var(--sage);font:inherit;font-size:.95rem;padding:12px 12px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+  nav.steps button[aria-current="step"]{color:var(--cream);border-bottom-color:var(--earth)}
+  nav.steps button:focus-visible{outline:2px solid var(--cream);outline-offset:-4px}
+  nav.steps .n{font-family:var(--serif);color:var(--earth);margin-right:6px}
+  main{padding:32px 0 64px}
+  section.panel{display:none}
+  section.panel.active{display:block}
+  h2{font-family:var(--serif);font-weight:400;font-size:1.75rem;margin:0 0 6px;color:var(--forest)}
+  h3{font-family:var(--serif);font-weight:400;font-size:1.25rem;margin:28px 0 8px;color:var(--forest)}
+  .lead{font-size:1.05rem;max-width:760px;margin:0 0 20px}
+  .card{background:var(--cream);border:1px solid var(--line);padding:20px;margin:16px 0}
+  .tint{background:var(--sage);border:0}
+  label{display:block;font-weight:700;margin:14px 0 6px}
+  .hint{font-weight:400;color:var(--muted);font-size:.9rem}
+  input[type=text],textarea,select{width:100%;font:inherit;font-size:1rem;color:var(--text);background:#fff;border:1px solid #9FB0A3;padding:10px;border-radius:2px}
+  textarea{min-height:96px;resize:vertical}
+  input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--earth);outline-offset:1px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .btn{display:inline-block;font:inherit;font-size:.95rem;padding:10px 16px;border:1px solid var(--forest);background:var(--forest);color:var(--cream);cursor:pointer;border-radius:2px;margin:4px 8px 4px 0}
+  .btn.ghost{background:transparent;color:var(--forest)}
+  .btn.small{padding:6px 10px;font-size:.85rem}
+  .btn:hover{filter:brightness(1.1)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .chip{background:var(--forest);color:var(--cream);padding:3px 10px;font-size:.9rem;border-radius:2px}
+  .chip.earth{background:var(--earth-dark)}
+  .op{border:1px solid var(--line);background:var(--cream);padding:16px;margin:12px 0}
+  .op-head{display:flex;gap:10px;align-items:flex-start}
+  .op-head input{flex:1}
+  .qgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:10px}
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  legend{font-weight:700;font-size:.92rem;margin-bottom:4px}
+  .seg{display:flex;flex-wrap:wrap;gap:6px}
+  .seg label{font-weight:400;margin:0;display:inline-flex;align-items:center;gap:4px;border:1px solid #9FB0A3;padding:4px 10px;background:#fff;cursor:pointer;font-size:.92rem}
+  .seg input{accent-color:var(--leaf)}
+  .verdict{margin-top:12px;font-size:.95rem}
+  .tag{display:inline-block;padding:2px 10px;font-weight:700;font-size:.85rem;border-radius:2px}
+  .tag.protect{background:var(--forest);color:var(--cream)}
+  .tag.open{background:var(--sage);color:var(--forest);border:1px solid var(--sage-2)}
+  .tag.w-High{color:var(--earth-dark)}
+  .ladder{display:flex;flex-direction:column-reverse;gap:6px;margin:12px 0}
+  .rung{display:flex;gap:12px;align-items:center;padding:10px 14px;cursor:pointer;border:2px solid transparent}
+  .rung input{accent-color:var(--earth)}
+  .rung:has(input:checked){border-color:var(--earth)}
+  .r1{background:#DCE7D8}.r2{background:#C9D8C4}.r3{background:#A9BFA8}.r4{background:#486D52;color:#FFFCF5}.r5{background:#2E5040;color:#FFFCF5}.r6{background:#18352D;color:#FFFCF5}
+  .rung b{font-family:var(--serif);font-weight:400;font-size:1.05rem;min-width:170px}
+  .rung span{font-size:.92rem}
+  .ladder-pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .ad{border:1px solid var(--line);background:#fff;padding:12px;cursor:pointer;display:block;font-weight:400;margin:0}
+  .ad:has(input:checked){border:2px solid var(--earth);padding:11px;background:#FFFCF5}
+  .ad .t{font-weight:700;display:block}
+  .ad .d{font-size:.9rem;display:block;margin-top:2px}
+  .ad .c{font-size:.85rem;color:var(--muted);display:block;margin-top:4px}
+  .ad .meta{font-size:.8rem;color:var(--earth-dark);display:block;margin-top:4px}
+  .ad input{float:right;accent-color:var(--earth)}
+  table{width:100%;border-collapse:collapse;margin-top:8px;background:var(--cream)}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.9rem;color:var(--muted);font-weight:700}
+  td input[type=number]{width:90px;font:inherit;padding:6px;border:1px solid #9FB0A3}
+  .total{font-weight:700}
+  .alert{background:var(--warn-bg);color:var(--warn);padding:12px 14px;margin:12px 0;border-left:0}
+  .ok{background:var(--sage);color:var(--forest);padding:12px 14px;margin:12px 0}
+  .navbtns{display:flex;justify-content:space-between;margin-top:28px;flex-wrap:wrap;gap:8px}
+  .empty{color:var(--muted);font-style:italic}
+  pre.summary{white-space:pre-wrap;background:#fff;border:1px solid var(--line);padding:18px;font-family:var(--sans);font-size:.95rem}
+  .status{min-height:1.4em;color:var(--leaf);font-size:.9rem}
+  footer{color:var(--muted);font-size:.85rem;padding:24px 0 40px;border-top:1px solid var(--line)}
+  @media (max-width:720px){
+    html{font-size:17px}
+    .row2,.qgrid,.ladder-pair,.menu{grid-template-columns:1fr}
+    .rung b{min-width:0}
+    header.top h1{font-size:1.7rem}
+  }
+  @media print{
+    nav.steps,.navbtns,.no-print,header.top .note{display:none!important}
+    section.panel{display:none!important}
+    section#p-summary{display:block!important}
+    body{background:#fff}
+    header.top{background:#fff;color:#000;padding:0}
+    header.top p{color:#000}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>Process Over Product: Faculty Workbook</h1>
+    <p>Work through Skill, Spot, Step, and Score on one assessment you already use. Protect what the objective names, open what it doesn't, and put the points on the reasoning.</p>
+    <p class="note">Your work saves only in this browser. Nothing is sent anywhere. Use the summary page to print or copy your plan.</p>
+  </div>
+</header>
+
+<nav class="steps" aria-label="Workbook steps">
+  <ol id="stepnav"></ol>
+</nav>
+
+<main class="wrap">
+
+<!-- 0. Assessment -->
+<section class="panel" id="p-start" aria-labelledby="h-start">
+  <h2 id="h-start">Your assessment</h2>
+  <p class="lead">Start with one Canvas quiz, discussion, or assignment you plan to teach again. Paste its learning objective exactly as written: the verbs will matter.</p>
+  <div class="card">
+    <label for="a-title">Assessment name</label>
+    <input type="text" id="a-title" data-field="title" placeholder="e.g., Vitamin D patient handout">
+    <div class="row2">
+      <div>
+        <label for="a-disc">Discipline or course</label>
+        <input type="text" id="a-disc" data-field="discipline" placeholder="e.g., Clinical nutrition">
+      </div>
+      <div>
+        <label for="a-type">Assessment type</label>
+        <select id="a-type" data-field="type">
+          <option value="">Choose one</option>
+          <option value="quiz">Quiz</option>
+          <option value="discussion">Discussion</option>
+          <option value="assignment">Assignment</option>
+        </select>
+      </div>
+    </div>
+    <label for="a-obj">Learning objective <span class="hint">(paste it as written)</span></label>
+    <textarea id="a-obj" data-field="objective" placeholder="Students will…"></textarea>
+    <div id="verbs" aria-live="polite"></div>
+  </div>
+  <div class="card tint no-print">
+    <strong>Want to see a finished example first?</strong> Load the vitamin D handout from the workshop, then clear it when you're ready to start your own.
+    <div style="margin-top:10px">
+      <button class="btn" type="button" id="load-example">Load the vitamin D example</button>
+      <button class="btn ghost" type="button" id="reset-all">Clear everything</button>
+    </div>
+    <div class="status" id="start-status" role="status"></div>
+  </div>
+  <div class="navbtns"><span></span><button class="btn" type="button" data-go="1">Next: Skill</button></div>
+</section>
+
+<!-- 1. Skill -->
+<section class="panel" id="p-skill" aria-labelledby="h-skill">
+  <h2 id="h-skill">1. Skill: split the task</h2>
+  <p class="lead">List every operation a student performs to complete this assessment, including the ones that feel like busywork. Then ask two questions of each one.</p>
+  <div class="card tint">
+    <strong>Question 1:</strong> Is this operation, or the reasoning behind it, named in the learning objective?<br>
+    <strong>Question 2:</strong> Would a student have to do it unaided later: on the final, in clinical or on the job, or in the next course?<br>
+    <span class="hint" style="color:var(--forest)">Weight is a judgment, not a formula. Peripheral work may be opened to AI; nothing has to be.</span>
+  </div>
+  <div id="ops"></div>
+  <button class="btn ghost no-print" type="button" id="add-op">+ Add an operation</button>
+  <div class="navbtns"><button class="btn ghost" type="button" data-go="0">Back</button><button class="btn" type="button" data-go="2">Next: Spot</button></div>
+</section>
+
+<!-- 2. Spot -->
+<section class="panel" id="p-spot" aria-labelledby="h-spot">
+  <h2 id="h-spot">2. Spot: place the protected work on the ladder</h2>
+  <p class="lead">For each protected operation, mark where it sits now and where one revision could take it. The ladder measures how much of what the work needs only the student has. Higher rungs make the student's thinking necessary and visible; none of them is "AI-proof."</p>
+  <div id="spot-list"></div>
+  <div class="navbtns"><button class="btn ghost" type="button" data-go="1">Back</button><button class="btn" type="button" data-go="3">Next: Step</button></div>
+</section>
+
+<!-- 3. Step -->
+<section class="panel" id="p-step" aria-labelledby="h-step">
+  <h2 id="h-step">3. Step: choose one revision</h2>
+  <p class="lead">Pick the smallest change that makes the protected work necessary and visible. Options that fit your assessment type and target rung are shown first.</p>
+  <div id="step-list"></div>
+  <div class="navbtns"><button class="btn ghost" type="button" data-go="2">Back</button><button class="btn" type="button" data-go="4">Next: Score</button></div>
+</section>
+
+<!-- 4. Score -->
+<section class="panel" id="p-score" aria-labelledby="h-score">
+  <h2 id="h-score">4. Score: put the points on the reasoning</h2>
+  <p class="lead">Rubric points are an incentive. When most of the points sit on the finished product, offloading the reasoning becomes the rational choice. Assign percentages so the protected work carries the weight.</p>
+  <div class="card">
+    <table aria-describedby="score-check">
+      <thead><tr><th scope="col">What gets scored</th><th scope="col">Kind</th><th scope="col">Weight (%)</th></tr></thead>
+      <tbody id="score-rows"></tbody>
+      <tfoot><tr><td class="total">Total</td><td></td><td class="total" id="score-total">0%</td></tr></tfoot>
+    </table>
+    <div id="score-check" aria-live="polite"></div>
+  </div>
+  <h3>Make generic answers lose points</h3>
+  <div class="card">
+    <p style="margin-top:0">Add a criterion like this to any process piece. It is the line that makes the process required, not optional.</p>
+    <p><em>Specific account of a check, rejection, doubt, or revision that points to something in the student's own work: a quoted sentence, a named claim, a named source. A response that could be pasted unchanged into another student's paper scores 0.</em></p>
+    <button class="btn small ghost no-print" type="button" id="copy-criterion">Copy this criterion</button>
+    <div class="status" id="crit-status" role="status"></div>
+  </div>
+  <div class="navbtns"><button class="btn ghost" type="button" data-go="3">Back</button><button class="btn" type="button" data-go="5">Next: Summary</button></div>
+</section>
+
+<!-- 5. Summary -->
+<section class="panel" id="p-summary" aria-labelledby="h-summary">
+  <h2 id="h-summary">Your plan</h2>
+  <p class="lead no-print">Print it, save it as a PDF, or copy it into your course notes. The board row matches the columns of the workshop's shared board.</p>
+  <div class="no-print">
+    <button class="btn" type="button" id="print">Print or save as PDF</button>
+    <button class="btn ghost" type="button" id="copy-summary">Copy plan as text</button>
+    <button class="btn ghost" type="button" id="copy-row">Copy shared board row</button>
+    <div class="status" id="sum-status" role="status"></div>
+  </div>
+  <label for="nextstep">My next step and date</label>
+  <input type="text" id="nextstep" data-field="nextStep" placeholder="e.g., Add the think-first draft and module lock before spring term starts (Jan 12)">
+  <pre class="summary" id="summary"></pre>
+  <div class="navbtns"><button class="btn ghost" type="button" data-go="4">Back</button><span></span></div>
+</section>
+
+</main>
+<footer class="wrap">
+  Built for the NDMU faculty webinar "Process Over Product" (December 3, 2026). Peripheral and constitutive operations follow Nakamura, D. (2026), <a href="https://doi.org/10.1007/s10648-026-10224-6">Augmentation or erosion? Regulating cognitive offloading in generative AI-supported STEM learning</a>, <em>Educational Psychology Review</em>, 38, 124.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "pop-workbook-v1";
+  var STEPS = ["Your assessment","Skill","Spot","Step","Score","Summary"];
+  var PANELS = ["p-start","p-skill","p-spot","p-step","p-score","p-summary"];
+  var RUNGS = [
+    [1,"Open knowledge","General, published knowledge is all a good answer needs"],
+    [2,"Course-anchored","Needs this course's materials or your framing"],
+    [3,"Class-anchored","Needs peers' work, a class discussion, or class data"],
+    [4,"Life-anchored","Needs the student's own setting, experience, or earlier work"],
+    [5,"Process-anchored","Needs the student's own checks, rejections, and revisions"],
+    [6,"Defended","Needs a reply to a question the student couldn't anticipate"]
+  ];
+  var ADAPT = [
+    {id:"think",t:"Think-first draft",d:"Students submit their own attempt at the protected work before any tools.",c:"Canvas: module requirement 'must submit' locks the next item until the draft is in.",rung:5,types:["assignment","discussion"],effort:"30 min"},
+    {id:"variant",t:"Variant case",d:"After submission, a new case opens. Students adjust their answer and explain what changed and why.",c:"Canvas: release with a module requirement after the main submission. 150 words or a short recording.",rung:6,types:["assignment","quiz","discussion"],effort:"30 min"},
+    {id:"audit",t:"Verification audit",d:"For each claim that changed between draft and final, students name the source checked and what it said.",c:"Canvas: a required section of the submission plus one rubric row.",rung:5,types:["assignment","discussion"],effort:"5 min"},
+    {id:"reflect",t:"Anchored Process Reflection",d:"One of five prompts (verify, reject, doubt, voice, weakness), 100–200 words, pointing to something specific in the work.",c:"Canvas: a quiz essay question or its own rubric row.",rung:5,types:["quiz","discussion","assignment"],effort:"30 min once"},
+    {id:"reject",t:"Reject and explain",d:"Students name one suggestion they didn't use, or changed a lot, and why.",c:"Canvas: one prompt line plus a rubric row.",rung:5,types:["discussion","assignment"],effort:"5 min"},
+    {id:"confidence",t:"Confidence + check",d:"After a key item, students rate their confidence and name how they'd confirm the answer.",c:"Canvas: a short item right after the target question, low points so honest 'low' ratings are safe.",rung:5,types:["quiz"],effort:"5 min"},
+    {id:"flaw",t:"Find the flaw",d:"Students find, explain, and fix planted errors in a plausible answer to the protected task.",c:"Canvas: quiz essay item or a file attached to the assignment.",rung:5,types:["quiz","discussion","assignment"],effort:"30 min"},
+    {id:"draft",t:"Draft trail",d:"Students submit notes or an early draft with the final, plus three sentences on the biggest change.",c:"Canvas: file upload with multiple files allowed.",rung:5,types:["assignment"],effort:"5 min"},
+    {id:"weak",t:"Named weakness",d:"Every submission ends with: “The weakest part is ___; with more time I'd ___.”",c:"Canvas: a prompt line or a final essay item.",rung:5,types:["quiz","discussion","assignment"],effort:"5 min"},
+    {id:"question",t:"One question back",d:"A peer asks one question about a choice in the protected work; the student answers in 50–100 words.",c:"Canvas: peer review, or a required follow-up discussion reply.",rung:6,types:["discussion","assignment"],effort:"30 min"},
+    {id:"explain",t:"Ninety-second explain",d:"Students talk through one decision in a short recording, with a written alternative.",c:"Canvas: record media in the Rich Content Editor of a reply or submission.",rung:6,types:["discussion","assignment"],effort:"30 min"},
+    {id:"local",t:"Local case swap",d:"Students apply the concept to their own workplace, clinical site, classroom, or community.",c:"Canvas: edit the prompt and offer a backup case.",rung:4,types:["discussion","assignment"],effort:"30 min"},
+    {id:"quote",t:"Post first, quote and extend",d:"Students post before seeing peers; replies quote one line, then extend or challenge it.",c:"Canvas: discussion setting 'Users must post before seeing replies.'",rung:3,types:["discussion"],effort:"5 min"},
+    {id:"classdata",t:"Class-made material",d:"The class builds a dataset or example set, and the assessment requires using it.",c:"Canvas: an ungraded survey or discussion feeds the next task.",rung:3,types:["quiz","discussion","assignment"],effort:"Redesign"},
+    {id:"anchor",t:"Module anchor",d:"Answers must cite a specific page, slide, or timestamp from this module, or engage your framing.",c:"Canvas: edit the prompt.",rung:2,types:["quiz","discussion","assignment"],effort:"5 min"}
+  ];
+  var VERBS = ["analyze","apply","appraise","assess","calculate","classify","compare","compose","construct","contrast","create","critique","defend","define","demonstrate","describe","design","develop","differentiate","discriminate","distinguish","evaluate","examine","explain","formulate","identify","illustrate","infer","integrate","interpret","judge","justify","list","map","model","plan","predict","prioritize","propose","recall","recognize","recommend","reflect","revise","select","solve","summarize","synthesize","translate","verify","write"];
+
+  var EXAMPLE = {
+    title:"Vitamin D patient handout", discipline:"Clinical nutrition", type:"assignment",
+    objective:"Students will evaluate evidence-based clinical indications for vitamin D supplementation, calculate individualized dosage recommendations based on patient risk categories while identifying contraindications and toxicity thresholds, and translate biochemical mechanisms of deficiency into plain language for health literacy.",
+    ops:[
+      {name:"Dose and risk stratification",q1:"yes",q2:"yes",weight:"High",now:1,target:5,adapt:"think",note:"Draft submitted before the pamphlet unlocks.",pts:30},
+      {name:"Contraindications and drug–nutrient interactions (e.g., thiazides)",q1:"yes",q2:"yes",weight:"High",now:1,target:6,adapt:"variant",note:"New patient on a thiazide, released after the pamphlet.",pts:30},
+      {name:"Plain-language translation, tone, and reading level",q1:"yes",q2:"yes",weight:"High",now:1,target:5,adapt:"audit",note:"Clinical audit of what changed between draft and final.",pts:25},
+      {name:"Finding and selecting sources",q1:"yes",q2:"partly",weight:"Medium",now:1,target:5,adapt:"audit",note:"Student confirms every citation exists and says what is claimed.",pts:0},
+      {name:"Reference formatting",q1:"no",q2:"no",weight:"Low",pts:0},
+      {name:"Layout and images (still check accuracy)",q1:"no",q2:"no",weight:"Low",pts:0},
+      {name:"Copyediting",q1:"no",q2:"no",weight:"Low",pts:0}
+    ],
+    productPts:15, nextStep:"Set up the module lock and variant case before spring term."
+  };
+
+  function blank(){ return {title:"",discipline:"",type:"",objective:"",ops:[{name:"",q1:"",q2:"",weight:""}],productPts:0,nextStep:"",step:0}; }
+  var state = load() || blank();
+
+  function load(){ try{ var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];}); }
+  function $(id){ return document.getElementById(id); }
+  function flash(id,msg){ var el=$(id); if(!el) return; el.textContent=msg; setTimeout(function(){ if(el.textContent===msg) el.textContent=""; },3000); }
+
+  function suggest(op){
+    if(!op.q1||!op.q2) return "";
+    if(op.q1==="yes"&&op.q2==="yes") return "High";
+    if(op.q1==="no"&&op.q2==="no") return "Low";
+    return "Medium";
+  }
+  function protectedOps(){ return state.ops.filter(function(o){ return o.name && (o.weight==="High"||o.weight==="Medium"); }); }
+  function openOps(){ return state.ops.filter(function(o){ return o.name && o.weight==="Low"; }); }
+  function idx(op){ return state.ops.indexOf(op); }
+
+  // ---------- navigation ----------
+  function buildNav(){
+    $("stepnav").innerHTML = STEPS.map(function(s,i){
+      return '<li><button type="button" data-go="'+i+'"><span class="n">'+(i===0?"·":i)+'</span>'+s+'</button></li>';
+    }).join("");
+  }
+  function go(i){
+    state.step=i; save();
+    PANELS.forEach(function(p,j){ $(p).classList.toggle("active", j===i); });
+    Array.prototype.forEach.call(document.querySelectorAll("#stepnav button"),function(b,j){
+      if(j===i) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+    });
+    if(i===2) renderSpot();
+    if(i===3) renderStep();
+    if(i===4) renderScore();
+    if(i===5) renderSummary();
+    var h = $(PANELS[i]).querySelector("h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
+    window.scrollTo(0,0);
+  }
+  document.addEventListener("click",function(e){
+    var b = e.target.closest("[data-go]"); if(b){ go(parseInt(b.getAttribute("data-go"),10)); }
+  });
+
+  // ---------- start ----------
+  function bindFields(){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-field]"),function(el){
+      el.value = state[el.getAttribute("data-field")] || "";
+      el.addEventListener("input",function(){ state[el.getAttribute("data-field")] = el.value; save(); if(el.id==="a-obj") renderVerbs(); });
+    });
+    renderVerbs();
+  }
+  function renderVerbs(){
+    var text=(state.objective||"").toLowerCase();
+    var found = VERBS.filter(function(v){ return new RegExp("\\b"+v+"(s|d|ed|ing)?\\b").test(text) || (v.slice(-1)==="e" && new RegExp("\\b"+v.slice(0,-1)+"ing\\b").test(text)) || (v.slice(-1)==="y" && new RegExp("\\b"+v.slice(0,-1)+"(ies|ied|ying)\\b").test(text)); });
+    $("verbs").innerHTML = found.length ? '<p style="margin:12px 0 0"><strong>Verbs in your objective:</strong> these name the work to protect.</p><div class="chips">'+found.map(function(v){return '<span class="chip earth">'+esc(v)+'</span>';}).join("")+'</div>' : "";
+  }
+  $("load-example").addEventListener("click",function(){
+    state = JSON.parse(JSON.stringify(EXAMPLE)); state.step=0; save(); bindFields(); renderOps(); flash("start-status","Example loaded. Walk through each step to see how it fills in.");
+  });
+  $("reset-all").addEventListener("click",function(){
+    state = blank(); save(); bindFields(); renderOps(); flash("start-status","Cleared. Start with your own assessment.");
+  });
+
+  // ---------- skill ----------
+  function seg(name,val,i,label){
+    var opts=[["yes","Yes"],["partly","Partly"],["no","No"]];
+    return '<fieldset><legend>'+label+'</legend><div class="seg">'+opts.map(function(o){
+      return '<label><input type="radio" name="'+name+i+'" value="'+o[0]+'" data-op="'+i+'" data-k="'+name+'"'+(val===o[0]?" checked":"")+'>'+o[1]+'</label>';
+    }).join("")+'</div></fieldset>';
+  }
+  function renderOps(){
+    $("ops").innerHTML = state.ops.map(function(op,i){
+      var w = op.weight || "";
+      var weightSel = '<fieldset><legend>Weight</legend><select data-op="'+i+'" data-k="weight" aria-label="Weight for operation '+(i+1)+'"><option value="">Choose</option>'+["High","Medium","Low"].map(function(x){return '<option'+(w===x?" selected":"")+'>'+x+'</option>';}).join("")+'</select></fieldset>';
+      var verdict = w ? (w==="Low" ? '<span class="tag open">Open to AI</span> Students may offload this; they still check it.' : '<span class="tag protect">Protect and measure</span> This is where the learning happens.') : '<span class="empty">Answer both questions to get a suggested weight.</span>';
+      return '<div class="op"><div class="op-head"><label class="sr" for="opn'+i+'" style="position:absolute;left:-9999px">Operation '+(i+1)+'</label>'+
+        '<input type="text" id="opn'+i+'" data-op="'+i+'" data-k="name" value="'+esc(op.name)+'" placeholder="Operation '+(i+1)+', e.g., choose which sources to trust">'+
+        '<button class="btn small ghost no-print" type="button" data-del="'+i+'" aria-label="Remove operation '+(i+1)+'">Remove</button></div>'+
+        '<div class="qgrid">'+seg("q1",op.q1,i,"Named in the objective?")+seg("q2",op.q2,i,"Needed unaided later?")+weightSel+'</div>'+
+        '<div class="verdict">'+verdict+'</div></div>';
+    }).join("");
+  }
+  $("ops").addEventListener("input",function(e){
+    var t=e.target, i=t.getAttribute("data-op"); if(i==null) return; i=parseInt(i,10);
+    var k=t.getAttribute("data-k"); var op=state.ops[i];
+    op[k]=t.value;
+    if(k==="q1"||k==="q2"){ var s=suggest(op); if(s) op.weight=s; }
+    save();
+    if(k!=="name"){
+      var sel = t.type==="radio" ? 'input[name="'+t.name+'"][value="'+t.value+'"]' : '[data-op="'+i+'"][data-k="'+k+'"]';
+      renderOps(); var f=document.querySelector("#ops "+sel); if(f) f.focus();
+    }
+  });
+  $("ops").addEventListener("change",function(e){ if(e.target.type==="radio"||e.target.tagName==="SELECT"){ /* handled on input */ } });
+  $("ops").addEventListener("click",function(e){
+    var b=e.target.closest("[data-del]"); if(!b) return;
+    state.ops.splice(parseInt(b.getAttribute("data-del"),10),1);
+    if(!state.ops.length) state.ops.push({name:"",q1:"",q2:"",weight:""});
+    save(); renderOps();
+  });
+  $("add-op").addEventListener("click",function(){ state.ops.push({name:"",q1:"",q2:"",weight:""}); save(); renderOps(); var l=state.ops.length-1; var el=$("opn"+l); if(el) el.focus(); });
+
+  // ---------- spot ----------
+  function ladder(i,key,val,label){
+    return '<fieldset><legend>'+label+'</legend><div class="ladder">'+RUNGS.map(function(r){
+      return '<label class="rung r'+r[0]+'"><input type="radio" name="'+key+i+'" value="'+r[0]+'" data-op="'+i+'" data-k="'+key+'"'+(String(val)===String(r[0])?" checked":"")+'><b>'+r[0]+' '+r[1]+'</b><span>'+r[2]+'</span></label>';
+    }).join("")+'</div></fieldset>';
+  }
+  function renderSpot(){
+    var ps = protectedOps();
+    if(!ps.length){ $("spot-list").innerHTML='<div class="alert">No protected operations yet. Go back to Skill and mark at least one operation High or Medium.</div>'; return; }
+    $("spot-list").innerHTML = ps.map(function(op){
+      var i=idx(op);
+      var gap = (op.now&&op.target) ? (op.target<=op.now ? '<div class="alert">Your target is not above where it sits now. Pick a higher rung, even one step.</div>' : '<div class="ok">Rung '+op.now+' → rung '+op.target+'.</div>') : "";
+      return '<div class="op"><h3 style="margin-top:0">'+esc(op.name)+' <span class="tag protect">'+esc(op.weight)+'</span></h3>'+
+        '<div class="ladder-pair">'+ladder(i,"now",op.now,"Where it sits now")+ladder(i,"target",op.target,"Where one revision takes it")+'</div>'+gap+'</div>';
+    }).join("");
+  }
+  $("spot-list").addEventListener("change",function(e){
+    var t=e.target, i=t.getAttribute("data-op"); if(i==null) return;
+    state.ops[parseInt(i,10)][t.getAttribute("data-k")] = parseInt(t.value,10); save(); renderSpot();
+  });
+
+  // ---------- step ----------
+  function renderStep(){
+    var ps = protectedOps();
+    if(!ps.length){ $("step-list").innerHTML='<div class="alert">No protected operations yet. Go back to Skill first.</div>'; return; }
+    var type = state.type;
+    $("step-list").innerHTML = ps.map(function(op){
+      var i=idx(op), tgt=op.target||5;
+      var list = ADAPT.slice().sort(function(a,b){
+        function score(x){ return (type && x.types.indexOf(type)<0 ? 10 : 0) + Math.abs(x.rung - tgt); }
+        return score(a)-score(b);
+      });
+      return '<div class="op"><h3 style="margin-top:0">'+esc(op.name)+'</h3><p class="hint" style="margin:0">Target: rung '+tgt+' '+RUNGS[tgt-1][1].toLowerCase()+(type?' · '+esc(type):'')+'</p>'+
+        '<fieldset><legend class="sr" style="position:absolute;left:-9999px">Revision for '+esc(op.name)+'</legend><div class="menu">'+list.map(function(a){
+          var fits = !type || a.types.indexOf(type)>=0;
+          return '<label class="ad"><input type="radio" name="ad'+i+'" value="'+a.id+'" data-op="'+i+'"'+(op.adapt===a.id?" checked":"")+'>'+
+            '<span class="t">'+esc(a.t)+'</span><span class="d">'+esc(a.d)+'</span><span class="c">'+esc(a.c)+'</span>'+
+            '<span class="meta">Rung '+a.rung+' · '+esc(a.effort)+(fits?'':' · not typical for a '+esc(type))+'</span></label>';
+        }).join("")+'</div></fieldset>'+
+        '<label for="note'+i+'">How you\'ll set it up <span class="hint">(one or two sentences)</span></label>'+
+        '<textarea id="note'+i+'" data-op="'+i+'" data-k="note" style="min-height:70px">'+esc(op.note||"")+'</textarea></div>';
+    }).join("");
+  }
+  $("step-list").addEventListener("change",function(e){
+    var t=e.target; if(t.type!=="radio") return;
+    state.ops[parseInt(t.getAttribute("data-op"),10)].adapt=t.value; save();
+  });
+  $("step-list").addEventListener("input",function(e){
+    var t=e.target; if(t.getAttribute("data-k")!=="note") return;
+    state.ops[parseInt(t.getAttribute("data-op"),10)].note=t.value; save();
+  });
+
+  // ---------- score ----------
+  function adaptName(id){ var a=ADAPT.filter(function(x){return x.id===id;})[0]; return a?a.t:""; }
+  function renderScore(){
+    var ps=protectedOps();
+    var rows = ps.map(function(op){
+      var i=idx(op);
+      return '<tr><td>'+esc(op.name)+(op.adapt?'<br><span class="hint">via '+esc(adaptName(op.adapt))+'</span>':'')+'</td><td><span class="tag protect">Protected</span></td><td><input type="number" min="0" max="100" step="5" data-op="'+i+'" value="'+(op.pts||0)+'" aria-label="Weight for '+esc(op.name)+'"></td></tr>';
+    });
+    rows.push('<tr><td>The finished product'+(openOps().length?'<br><span class="hint">includes open work: '+esc(openOps().map(function(o){return o.name;}).join(", "))+'</span>':'')+'</td><td><span class="tag open">Product</span></td><td><input type="number" min="0" max="100" step="5" id="prod-pts" value="'+(state.productPts||0)+'" aria-label="Weight for the finished product"></td></tr>');
+    $("score-rows").innerHTML = rows.join("");
+    checkScore();
+  }
+  function checkScore(){
+    var ps=protectedOps();
+    var prot = ps.reduce(function(s,o){return s+(Number(o.pts)||0);},0);
+    var prod = Number(state.productPts)||0, total=prot+prod;
+    $("score-total").textContent = total+"%";
+    var msgs=[];
+    if(!ps.length) msgs.push(['alert','No protected operations yet. Go back to Skill.']);
+    if(total!==100 && total>0) msgs.push(['alert','Weights add up to '+total+'%. Adjust them to total 100%.']);
+    if(total>0 && prod>=prot) msgs.push(['alert','The finished product carries as much weight as the protected work, or more. Offloading the reasoning stays the rational choice.']);
+    var zero = ps.filter(function(o){return o.weight==="High" && !(Number(o.pts)>0);});
+    if(zero.length && total>0) msgs.push(['alert','No points on: '+zero.map(function(o){return o.name;}).join(", ")+'. Points can sit on a combined criterion, but this high-weight work should be scored somewhere.']);
+    if(total===100 && prod<prot && !zero.length) msgs.push(['ok','The points sit on the reasoning. A student cannot score well without doing the protected work.']);
+    $("score-check").innerHTML = msgs.map(function(m){return '<div class="'+m[0]+'">'+esc(m[1])+'</div>';}).join("");
+  }
+  $("score-rows").addEventListener("input",function(e){
+    var t=e.target;
+    if(t.id==="prod-pts") state.productPts=Number(t.value)||0;
+    else if(t.getAttribute("data-op")!=null) state.ops[parseInt(t.getAttribute("data-op"),10)].pts=Number(t.value)||0;
+    save(); checkScore();
+  });
+  var CRIT = "Specific account of a check, rejection, doubt, or revision that points to something in the student's own work: a quoted sentence, a named claim, a named source. A response that could be pasted unchanged into another student's paper scores 0.";
+  function copy(text,statusId,msg){
+    function fallback(){ var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); flash(statusId,msg); }catch(e){ flash(statusId,"Copy failed. Select the text and copy it manually."); } document.body.removeChild(ta); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){flash(statusId,msg);},fallback); } else fallback();
+  }
+  $("copy-criterion").addEventListener("click",function(){ copy(CRIT,"crit-status","Criterion copied."); });
+
+  // ---------- summary ----------
+  function summaryText(){
+    var ps=protectedOps(), os=openOps(), L=[];
+    L.push("PROCESS OVER PRODUCT: ASSESSMENT PLAN");
+    L.push("");
+    L.push("Assessment: "+(state.title||"(untitled)")+(state.type?" ("+state.type+")":""));
+    if(state.discipline) L.push("Discipline: "+state.discipline);
+    if(state.objective) L.push("Objective: "+state.objective);
+    L.push("");
+    L.push("1. SKILL");
+    L.push("Protect and measure:");
+    if(ps.length) ps.forEach(function(o){ L.push("  - "+o.name+" ("+o.weight+")"); }); else L.push("  (none yet)");
+    L.push("Open to AI (students still check it):");
+    if(os.length) os.forEach(function(o){ L.push("  - "+o.name); }); else L.push("  (none yet)");
+    L.push("");
+    L.push("2. SPOT");
+    ps.forEach(function(o){ L.push("  - "+o.name+": rung "+(o.now||"?")+(o.now?" "+RUNGS[o.now-1][1].toLowerCase():"")+" → rung "+(o.target||"?")+(o.target?" "+RUNGS[o.target-1][1].toLowerCase():"")); });
+    L.push("");
+    L.push("3. STEP");
+    ps.forEach(function(o){ L.push("  - "+o.name+": "+(adaptName(o.adapt)||"(not chosen)")+(o.note?" — "+o.note:"")); });
+    L.push("");
+    L.push("4. SCORE");
+    ps.forEach(function(o){ L.push("  - "+o.name+": "+(Number(o.pts)||0)+"%"); });
+    L.push("  - Finished product: "+(Number(state.productPts)||0)+"%");
+    L.push("  Criterion for process pieces: "+CRIT);
+    L.push("");
+    L.push("NEXT STEP: "+(state.nextStep||"(write one with a date)"));
+    return L.join("\n");
+  }
+  function boardRow(){
+    var ps=protectedOps(), os=openOps();
+    var low = ps.slice().sort(function(a,b){return (a.now||9)-(b.now||9);})[0];
+    var cells=[state.discipline, state.type, state.title, state.objective,
+      os.map(function(o){return o.name;}).join("; "),
+      ps.map(function(o){return o.name+" ("+o.weight+")";}).join("; "),
+      ps.map(function(o){return o.now||"";}).filter(String).join("/"),
+      ps.map(function(o){return adaptName(o.adapt)+(o.target?" (rung "+o.target+")":"");}).filter(function(x){return x.trim();}).join("; ")];
+    return cells.map(function(c){return String(c||"").replace(/[\t\n]+/g," ");}).join("\t");
+  }
+  function renderSummary(){ $("summary").textContent = summaryText(); }
+  $("nextstep").addEventListener("input",function(){ renderSummary(); });
+  $("print").addEventListener("click",function(){ renderSummary(); window.print(); });
+  $("copy-summary").addEventListener("click",function(){ copy(summaryText(),"sum-status","Plan copied."); });
+  $("copy-row").addEventListener("click",function(){ copy(boardRow(),"sum-status","Row copied. Paste it into the first empty row of the shared board."); });
+
+  // ---------- init ----------
+  buildNav(); bindFields(); renderOps(); go(Math.min(Math.max(state.step||0,0),5));
+})();
+</script>
+</body>
+</html>
